@@ -12,4 +12,3 @@ plugins {
 rootProject.name = "kt-template-generator"
 include("lib")
 include("example")
-include("example")

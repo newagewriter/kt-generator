@@ -1,9 +1,73 @@
+import java.net.URI
+
 plugins {
     kotlin("jvm") version "1.8.0"
+    `maven-publish`
 }
 
 group = "io.github.newagewriter"
-version = "0.1.0-SNAPSHOT"
+version = project.extra["lib_version"] as String
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "org.gradle.sample"
+            artifactId = "kt-generator"
+            version = project.extra["lib_version"] as String
+
+            from(components["java"])
+            pom {
+                name = "kt-generator"
+                description = "Kotlin file generator from template"
+                url = "hhttps://github.com/newagewriter/kt-generator"
+//                properties = mapOf(
+//                    "myProp" to "value",
+//                    "prop.with.dots" to "anotherValue"
+//                )
+                licenses {
+                    license {
+                        name = "The MIT License (MIT)"
+                        url = "https://mit-license.org/"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "newagewriter"
+                        name = "Krzysztof Betlej"
+                        email = "pisarzenowejery@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://example.com/my-library.git"
+                    developerConnection = "git@github.com:newagewriter/kt-generator.git"
+                    url = "https://github.com/newagewriter/kt-generator"
+                }
+            }
+        }
+    }
+
+    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = "https://maven.pkg.github.com/newagewriter/mapper"
+//            credentials {
+//                username = System.getenv("GITHUB_ACTOR")
+//                password = System.getenv("GITHUB_TOKEN")
+//            }
+//        }
+
+        maven {
+            name = "MavenCentral"
+            val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = URI.create(if ((version as String).endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+            credentials {
+                username = System.getenv("JRELEASER_NEXUS2_USERNAME")
+                password = System.getenv("JRELEASER_NEXUS2_PASSWORD")
+            }
+        }
+    }
+}
 
 repositories {
     mavenCentral()
