@@ -1,0 +1,54 @@
+package io.github.newagewriter.processor.mapper
+@foreach($mapperList as key -> value):
+import #if("$value" == ""):${key} #else ${value}.${key} #endif
+import #if("$value" == ""):mapper.${key}Mapper #else ${value}.mapper.${key}Mapper #endif
+@end
+
+/**
+ * GeneratedMapperFactory is auto generated class. Do not change this file.
+ * All changes made in this class will be remove after rebuild
+ */
+object GeneratedMapperFactory : MapperFactory {
+
+    init {
+        AbstractMapper.Factory = this
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Deprecated(
+            "Use forClass instead. Deprecated since 0.4.0, will be removed in 0.5.0.",
+            replaceWith = ReplaceWith("forClass(clazz: Class<T>)")
+        )
+    public override fun <T : Any> of(obj: T): AbstractMapper<T>? {
+        when(obj) {
+        @foreach($types):
+            is $element -> return ${element}Mapper(obj, null) as AbstractMapper<T>
+        @end
+            else -> return null
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Deprecated(
+            "Use forClass with only clazz param. Deprecated since 0.4.0, will be remove in 0.5.0. ",
+            replaceWith = ReplaceWith("forClass(clazz: Class<T>)")
+        )
+    public override fun <T : Any> forClass(obj: Class<T>, map: Map<String, Any?>): AbstractMapper<T>? {
+        when(obj.simpleName) {
+        @foreach($types):
+            $element::class.java.simpleName -> return ${element}Mapper($element::class.java) as AbstractMapper<T>
+        @end
+            else -> return null
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    public override fun <T : Any> forClass(clazz: Class<T>): AbstractMapper<T>? {
+        when(clazz.simpleName) {
+        @foreach($types):
+            $element::class.java.simpleName -> return ${element}Mapper($element::class.java) as AbstractMapper<T>
+        @end
+            else -> return null
+        }
+    }
+}
