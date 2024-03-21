@@ -1,8 +1,10 @@
 import java.net.URI
 
 plugins {
+    java
     kotlin("jvm") version "1.8.0"
     `maven-publish`
+    signing
 }
 
 group = "io.github.newagewriter"
@@ -92,4 +94,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(8)
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications["maven"])
 }
