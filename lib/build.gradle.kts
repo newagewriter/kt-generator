@@ -62,8 +62,10 @@ publishing {
             val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             url = URI.create(if ((version as String).endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
             credentials {
-                username = System.getenv("JRELEASER_NEXUS2_USERNAME")
-                password = System.getenv("JRELEASER_NEXUS2_PASSWORD")
+//                username = System.getenv("JRELEASER_NEXUS2_USERNAME")
+//                password = System.getenv("JRELEASER_NEXUS2_PASSWORD")
+                username = "qaKUO9l+"
+                password = "x4HL68w1YuvatQG8zmomCD6I0VWlMY2qVKbYqHy14BoF"
             }
         }
     }
