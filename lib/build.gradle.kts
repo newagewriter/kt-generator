@@ -11,7 +11,7 @@ version = project.extra["lib_version"] as String
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "org.gradle.sample"
+            groupId = "io.github.newagewriter"
             artifactId = "kt-generator"
             version = project.extra["lib_version"] as String
 
@@ -38,8 +38,8 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://example.com/my-library.git"
-                    developerConnection = "git@github.com:newagewriter/kt-generator.git"
+                    connection = "scm:git:git@github.com:newagewriter/kt-generator.git"
+                    developerConnection = "scm:git:ssh://git@github.com:newagewriter/kt-generator.git"
                     url = "https://github.com/newagewriter/kt-generator"
                 }
             }
