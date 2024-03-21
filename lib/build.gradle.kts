@@ -75,6 +75,11 @@ repositories {
     mavenCentral()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
