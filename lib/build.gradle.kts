@@ -1,8 +1,10 @@
 import java.net.URI
 
 plugins {
+    java
     kotlin("jvm") version "1.8.0"
     `maven-publish`
+    signing
 }
 
 group = "io.github.newagewriter"
@@ -11,7 +13,7 @@ version = project.extra["lib_version"] as String
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "org.gradle.sample"
+            groupId = "io.github.newagewriter"
             artifactId = "kt-generator"
             version = project.extra["lib_version"] as String
 
@@ -38,8 +40,8 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://example.com/my-library.git"
-                    developerConnection = "git@github.com:newagewriter/kt-generator.git"
+                    connection = "scm:git:git@github.com:newagewriter/kt-generator.git"
+                    developerConnection = "scm:git:ssh://git@github.com:newagewriter/kt-generator.git"
                     url = "https://github.com/newagewriter/kt-generator"
                 }
             }
@@ -62,8 +64,10 @@ publishing {
             val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             url = URI.create(if ((version as String).endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
             credentials {
-                username = System.getenv("JRELEASER_NEXUS2_USERNAME")
-                password = System.getenv("JRELEASER_NEXUS2_PASSWORD")
+//                username = System.getenv("JRELEASER_NEXUS2_USERNAME")
+//                password = System.getenv("JRELEASER_NEXUS2_PASSWORD")
+                username = "qaKUO9l+"
+                password = "x4HL68w1YuvatQG8zmomCD6I0VWlMY2qVKbYqHy14BoF"
             }
         }
     }
@@ -71,6 +75,11 @@ publishing {
 
 repositories {
     mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -85,4 +94,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(8)
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications["maven"])
 }
