@@ -1,6 +1,8 @@
 package io.github.newagewriter.template
 
+import javax.script.Bindings
 import javax.script.ScriptEngineManager
+import javax.script.SimpleBindings
 
 
 class TemplateClass(
@@ -60,29 +62,30 @@ class TemplateClass(
                         matches = matches.next()
                     }
                 }
-
                 else -> {
                     val pattern = Regex("\\\$\\{$key}")
                     result = result.replace(pattern, value.toString())
                 }
             }
         }
-        if (result.contains("GeneratedMapperFactory")) {
+//        if (result.contains("GeneratedMapperFactory")) {
             val ifPattern = Regex("#if\\(([^#]+)\\):([^#]+)#else ([^#]+)#endif")
             var condMatches = ifPattern.find(result)
             var diff = 0
+            val scriptManager = ScriptEngineManager()
+            val engine = scriptManager.getEngineByName("kotlin")
+        val bindings : Bindings = SimpleBindings()
+        bindings.putAll(varMap)
             while (condMatches != null) {
                 condMatches.let { m ->
                     val condition = m.groups[1]
                     val resultOne = m.groups[2]
                     val resultElse = m.groups[3]
-                    val scriptManager = ScriptEngineManager()
-
-                    val engine = scriptManager.getEngineByName("kotlin")
 
                     try {
                         println("contitiond to execute: ${condition?.value}")
-                        val value = engine.eval(condition?.value) as Boolean
+
+                        val value = engine.eval(condition?.value, bindings) as Boolean
                         val subStr = result.substring(m.range.first - diff, m.range.last + 1 - diff)
                         val conditionResult = if (value) resultOne?.value else resultElse?.value
                         diff += subStr.length - (conditionResult ?: "").length
@@ -93,8 +96,11 @@ class TemplateClass(
                     }
                 }
                 condMatches = condMatches.next()
-            }
+//            }
         }
+//        println("code to compile: $result")
+//        val evv = engine.eval(result, bindings)
+//        println("result: ${evv}")
         return result
     }
 }

@@ -1,8 +1,8 @@
-package ${classPackage}.mapper
+package #if("$classPackage" != ""):${classPackage}.mapper #else mapper #endif
 
 import io.github.newagewriter.processor.converter.MapperConverter
 import io.github.newagewriter.processor.mapper.AbstractMapper
-import ${classPackage}.${className}
+import #if("$classPackage" != ""):${classPackage}.${className} #else ${className} #endif
 
 /**
  * ${className}Mapper is auto generated class. Do not change this file.

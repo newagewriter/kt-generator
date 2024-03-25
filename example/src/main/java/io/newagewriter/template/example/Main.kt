@@ -48,6 +48,16 @@ fun main(args: Array<String>) {
         mapperUtilsTemplate.compile()
     )
 
+    val mapperTemplate = TemplateLoader.load("MapperTemplate")
+    mapperTemplate.addVariable("className", "TestModel")
+    mapperTemplate.addVariable("classPackage", "com.test")
+    mapperTemplate.addVariable("fields", mutableMapOf<String, String>("t:sd" to "fdf"))
+    mapperTemplate.addVariable("map", mutableMapOf<String, String>("t:sd" to "fdf"))
+    readKotlinFile(
+        "com.newagewriter.processor.mapper",
+        "TestModelMapper.kt",
+        mapperTemplate.compile()
+    )
 }
 
 fun readKotlinFile(packageName: String, fileName: String, content: String) {
