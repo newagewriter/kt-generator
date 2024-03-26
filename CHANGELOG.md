@@ -9,3 +9,8 @@
 
 ### Fixes
 * Fix #if #else pragma now working with two variable format: ${variable} or $variable.
+* 
+# 0.1.0-beta.3
+
+### Fixes
+* Fix script engine to works outside library
