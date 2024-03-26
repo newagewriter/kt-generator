@@ -15,23 +15,6 @@ fun main(args: Array<String>) {
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
     println("Program arguments: ${args.joinToString()}")
 
-    val scriptManager = ScriptEngineManager()
-//    val engines = scriptManager.getEngineFactories()
-//    println("eninges: ${engines.size}")
-//    for (f in engines) {
-//        println("Engine Name:" + f.engineName)
-//    }
-    scriptManager.getEngineByName("kotlin")?.let { engine ->
-        try {
-            val myString = "test"
-            val value = engine.eval("\"com.st\" == \"\"")
-            println("result: $value")
-            println("multi conditions: ${engine.eval("\"$myString\" == \"test\" && $value == false")}")
-//            ProcessorLogger.logD("[KB]", "condition: ${value}")
-        } catch (ex: Exception) {
-//            ProcessorLogger.logD("[KB]", "exception: $ex")
-        }
-    }
     val mapperList = mutableMapOf<String, String>(
         "TestModel" to "com.test",
         "TestModel2" to "",
