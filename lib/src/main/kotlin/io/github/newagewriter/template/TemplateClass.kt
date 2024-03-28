@@ -72,33 +72,38 @@ class TemplateClass(
         }
 //        if (result.contains("GeneratedMapperFactory")) {
         val ifPattern = Regex("#if\\(([^#]+)\\):([^#]+)#else ([^#]+)#endif")
-        var condMatches = ifPattern.find(result)
-        var diff = 0
-        val engine = scriptManager.getEngineByName("kotlin")
-        val bindings: Bindings = SimpleBindings()
-        bindings.putAll(varMap)
-        while (condMatches != null) {
-            condMatches.let { m ->
-                val condition = m.groups[1]
-                val resultOne = m.groups[2]
-                val resultElse = m.groups[3]
 
-                try {
-                    println("contitiond to execute: ${condition?.value}")
+        val engine = scriptManager.getEngineByName("kotlin") ?: scriptManager.engineFactories[0]?.scriptEngine
 
-                    val value = engine.eval(condition?.value, bindings) as Boolean
-                    val subStr = result.substring(m.range.first - diff, m.range.last + 1 - diff)
-                    val conditionResult = if (value) resultOne?.value else resultElse?.value
-                    diff += subStr.length - (conditionResult ?: "").length
-                    result = result.replace(subStr, conditionResult ?: "")
-                } catch (ex: Exception) {
-                    println("problem with eval: $ex, $ex.pr")
-                    ex.printStackTrace(System.out)
+        engine?.let {
+            var condMatches = ifPattern.find(result)
+            var diff = 0
+            val bindings: Bindings = SimpleBindings()
+            bindings.putAll(varMap)
+            while (condMatches != null) {
+                condMatches.let { m ->
+                    val condition = m.groups[1]
+                    val resultOne = m.groups[2]
+                    val resultElse = m.groups[3]
+
+                    try {
+                        println("contitiond to execute: ${condition?.value}")
+
+                        val value = engine.eval(condition?.value, bindings) as Boolean
+                        val subStr = result.substring(m.range.first - diff, m.range.last + 1 - diff)
+                        val conditionResult = if (value) resultOne?.value else resultElse?.value
+                        diff += subStr.length - (conditionResult ?: "").length
+                        result = result.replace(subStr, conditionResult ?: "")
+                    } catch (ex: Exception) {
+                        println("problem with eval: $ex, $ex.pr")
+                        ex.printStackTrace(System.out)
+                    }
                 }
-            }
-            condMatches = condMatches.next()
+                condMatches = condMatches.next()
 //            }
+            }
         }
+
 //        println("code to compile: $result")
 //        val evv = engine.eval(result, bindings)
 //        println("result: ${evv}")
@@ -107,19 +112,5 @@ class TemplateClass(
 
     companion object {
         private val scriptManager = ScriptEngineManager()
-
-        init {
-            scriptManager.getEngineByName("kotlin")?.let { engine ->
-                try {
-                    val myString = "test"
-                    val value = engine.eval("\"com.st\" == \"\"")
-                    println("result: $value")
-                    println("multi conditions: ${engine.eval("\"$myString\" == \"test\" && $value == false")}")
-//            ProcessorLogger.logD("[KB]", "condition: ${value}")
-                } catch (ex: Exception) {
-//            ProcessorLogger.logD("[KB]", "exception: $ex")
-                }
-            }
-        }
     }
 }

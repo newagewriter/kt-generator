@@ -28,3 +28,7 @@ build
 gen
 .idea
 .gradle
+
+
+# local files
+local.properties
