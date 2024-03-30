@@ -1,8 +1,8 @@
 package io.github.newagewriter.processor.mapper
-@foreach($mapperList as key -> value):
+#foreach($mapperList as key -> value):
 import #if("$value" == ""):${key} #else ${value}.${key} #endif
 import #if("$value" == ""):mapper.${key}Mapper #else ${value}.mapper.${key}Mapper #endif
-@end
+#end
 
 /**
  * GeneratedMapperFactory is auto generated class. Do not change this file.
