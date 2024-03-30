@@ -13,4 +13,13 @@
 # 0.1.0-beta.3
 
 ### Fixes
-* Fix script engine to works outside library
+* Fix script engine to works outside library. Still not working in preprocessor
+
+0.1.0-beta.4
+
+### Fixes
+* Fix script engine to works outside library. Add support for working in preprocessor
+
+### Changes
+* change @foreach to #foreach to unify commands
+* Update README file

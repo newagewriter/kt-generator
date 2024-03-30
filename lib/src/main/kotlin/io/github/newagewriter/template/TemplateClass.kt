@@ -1,5 +1,6 @@
 package io.github.newagewriter.template
 
+import io.github.newagewriter.template.keywords.Foreach
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
@@ -18,10 +19,10 @@ class TemplateClass(
     fun compile(): String {
         var result = template
         varMap.forEach { key, value ->
+            val forEach = Foreach(key)
             when (value) {
                 is Collection<*> -> {
-                    val pattern = Regex("@foreach\\(\\\$$key(, separator=\"([^\"]+)\")?\\):([^@]+)@end")
-                    var matches = pattern.find(result)
+                    var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
                         value.forEach { v ->
@@ -31,35 +32,29 @@ class TemplateClass(
 
                             mapBlock.append("$statement$separator")
                         }
-                        result = result.replaceFirst(pattern, mapBlock.toString())
+                        result = result.replaceFirst(forEach.pattern, mapBlock.toString())
                         matches = matches.next()
                     }
                 }
 
                 is Map<*, *> -> {
-                    val pattern =
-                        Regex("@foreach\\(\\\$$key as ([a-zA-Z0-1]+)\\s*->\\s*([a-zA-Z0-1]+)(, separator=\"([^\"]+)\")?\\):([^@]+)@end")
-                    var matches = pattern.find(result)
-                    var index = 0
-                    if (key == "mapperList") {
-//                        println("found matches: ${matches?.groups}")
-                        matches?.groups?.forEach {
-                            println("group ${index++}: ${it?.value}")
-                        }
-                    }
+                    var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
                         value.forEach { k, v ->
                             val keyName = matches?.groupValues?.get(1)
                             val valueName = matches?.groupValues?.get(2)
                             val separator = matches?.groupValues?.get(4) ?: ""
+                            println("key = $keyName, value = $valueName, separator = $separator, match: ${matches?.groupValues?.get(5)}")
                             val statement = (matches?.groupValues?.get(5) ?: "").trimEnd()
                                 .replace(Regex("\\\$(($keyName)|(\\{$keyName}))"), "$k")
                                 .replace(Regex("\\\$(($valueName)|(\\{$valueName}))"), "$v")
 
                             mapBlock.append("$statement$separator")
+                            println("statement: $statement")
                         }
-                        result = result.replaceFirst(pattern, mapBlock.toString())
+
+                        result = result.replaceFirst(forEach.pattern, mapBlock.toString())
                         matches = matches.next()
                     }
                 }
@@ -70,7 +65,6 @@ class TemplateClass(
                 }
             }
         }
-//        if (result.contains("GeneratedMapperFactory")) {
         val ifPattern = Regex("#if\\(([^#]+)\\):([^#]+)#else ([^#]+)#endif")
 
         val engine = scriptManager.getEngineByName("kotlin") ?: scriptManager.engineFactories[0]?.scriptEngine
@@ -100,7 +94,6 @@ class TemplateClass(
                     }
                 }
                 condMatches = condMatches.next()
-//            }
             }
         }
 

@@ -86,7 +86,7 @@ java {
 dependencies {
     implementation(kotlin("stdlib"))
     runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
-    kapt("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
+//    kapt("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
     testImplementation(kotlin("test"))
 }
 
