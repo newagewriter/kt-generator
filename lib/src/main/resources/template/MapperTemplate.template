@@ -22,7 +22,7 @@ class ${className}Mapper(clazz : Class<${className}>) : AbstractMapper<${classNa
         val result = mapOf<String, Any?>(
         #foreach($fields as key -> value, separator=","):
             "$key" to getValue(obj.$value)
-        #end
+        #endforeach
         )
         return result
     }
@@ -35,7 +35,7 @@ class ${className}Mapper(clazz : Class<${className}>) : AbstractMapper<${classNa
                 convertedMap[parts[1]] = $value
             }
         }
-        #end
+        #endforeach
         return createFromMap(convertedMap, ${className}::class)
     }
 }

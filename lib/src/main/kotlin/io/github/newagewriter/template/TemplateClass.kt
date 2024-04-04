@@ -1,6 +1,7 @@
 package io.github.newagewriter.template
 
-import io.github.newagewriter.template.keywords.Foreach
+import io.github.newagewriter.template.keywords.MapForeach
+import io.github.newagewriter.template.keywords.ListForeach
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
@@ -18,10 +19,10 @@ class TemplateClass(
 
     fun compile(): String {
         var result = template
-        varMap.forEach { key, value ->
-            val forEach = Foreach(key)
+        varMap.forEach { (key, value) ->
             when (value) {
                 is Collection<*> -> {
+                    val forEach = ListForeach(key)
                     var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
@@ -29,7 +30,7 @@ class TemplateClass(
                             val separator = matches?.groupValues?.get(2) ?: ""
                             val statement = (matches?.groupValues?.get(3) ?: "").trimEnd()
                                 .replace(Regex("\\\$((element)|(\\{element}))"), "$v")
-
+                            println("separator = $separator, statement = $statement")
                             mapBlock.append("$statement$separator")
                         }
                         result = result.replaceFirst(forEach.pattern, mapBlock.toString())
@@ -38,6 +39,7 @@ class TemplateClass(
                 }
 
                 is Map<*, *> -> {
+                    val forEach = MapForeach(key)
                     var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
