@@ -5,7 +5,6 @@ plugins {
     kotlin("jvm") version "1.8.0"
     `maven-publish`
     signing
-    id("org.jetbrains.kotlin.kapt")
 }
 
 group = "io.github.newagewriter"
