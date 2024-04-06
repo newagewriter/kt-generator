@@ -1,6 +1,10 @@
 package io.github.newagewriter.template
 
+import io.github.newagewriter.template.keywords.MapForeach
+import io.github.newagewriter.template.keywords.ListForeach
+import javax.script.Bindings
 import javax.script.ScriptEngineManager
+import javax.script.SimpleBindings
 
 
 class TemplateClass(
@@ -15,48 +19,44 @@ class TemplateClass(
 
     fun compile(): String {
         var result = template
-        varMap.forEach { key, value ->
+        varMap.forEach { (key, value) ->
             when (value) {
                 is Collection<*> -> {
-                    val pattern = Regex("@foreach\\(\\\$$key(, separator=\"([^\"]+)\")?\\):([^@]+)@end")
-                    var matches = pattern.find(result)
+                    val forEach = ListForeach(key)
+                    var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
                         value.forEach { v ->
                             val separator = matches?.groupValues?.get(2) ?: ""
                             val statement = (matches?.groupValues?.get(3) ?: "").trimEnd()
                                 .replace(Regex("\\\$((element)|(\\{element}))"), "$v")
-
+                            println("separator = $separator, statement = $statement")
                             mapBlock.append("$statement$separator")
                         }
-                        result = result.replaceFirst(pattern, mapBlock.toString())
+                        result = result.replaceFirst(forEach.pattern, mapBlock.toString())
                         matches = matches.next()
                     }
                 }
 
                 is Map<*, *> -> {
-                    val pattern = Regex("@foreach\\(\\\$$key as ([a-zA-Z0-1]+)\\s*->\\s*([a-zA-Z0-1]+)(, separator=\"([^\"]+)\")?\\):([^@]+)@end")
-                    var matches = pattern.find(result)
-                    var index = 0
-                    if (key == "mapperList") {
-//                        println("found matches: ${matches?.groups}")
-                        matches?.groups?.forEach {
-                            println("group ${index++}: ${it?.value}")
-                        }
-                    }
+                    val forEach = MapForeach(key)
+                    var matches = forEach.find(result)
                     while (matches != null) {
                         val mapBlock = StringBuilder()
                         value.forEach { k, v ->
                             val keyName = matches?.groupValues?.get(1)
                             val valueName = matches?.groupValues?.get(2)
                             val separator = matches?.groupValues?.get(4) ?: ""
+                            println("key = $keyName, value = $valueName, separator = $separator, match: ${matches?.groupValues?.get(5)}")
                             val statement = (matches?.groupValues?.get(5) ?: "").trimEnd()
                                 .replace(Regex("\\\$(($keyName)|(\\{$keyName}))"), "$k")
                                 .replace(Regex("\\\$(($valueName)|(\\{$valueName}))"), "$v")
 
                             mapBlock.append("$statement$separator")
+                            println("statement: $statement")
                         }
-                        result = result.replaceFirst(pattern, mapBlock.toString())
+
+                        result = result.replaceFirst(forEach.pattern, mapBlock.toString())
                         matches = matches.next()
                     }
                 }
@@ -67,22 +67,25 @@ class TemplateClass(
                 }
             }
         }
-        if (result.contains("GeneratedMapperFactory")) {
-            val ifPattern = Regex("#if\\(([^#]+)\\):([^#]+)#else ([^#]+)#endif")
+        val ifPattern = Regex("#if\\(([^#]+)\\):([^#]+)#else ([^#]+)#endif")
+
+        val engine = scriptManager.getEngineByName("kotlin") ?: scriptManager.engineFactories[0]?.scriptEngine
+
+        engine?.let {
             var condMatches = ifPattern.find(result)
             var diff = 0
+            val bindings: Bindings = SimpleBindings()
+            bindings.putAll(varMap)
             while (condMatches != null) {
                 condMatches.let { m ->
                     val condition = m.groups[1]
                     val resultOne = m.groups[2]
                     val resultElse = m.groups[3]
-                    val scriptManager = ScriptEngineManager()
-
-                    val engine = scriptManager.getEngineByName("kotlin")
 
                     try {
                         println("contitiond to execute: ${condition?.value}")
-                        val value = engine.eval(condition?.value) as Boolean
+
+                        val value = engine.eval(condition?.value, bindings) as Boolean
                         val subStr = result.substring(m.range.first - diff, m.range.last + 1 - diff)
                         val conditionResult = if (value) resultOne?.value else resultElse?.value
                         diff += subStr.length - (conditionResult ?: "").length
@@ -95,6 +98,14 @@ class TemplateClass(
                 condMatches = condMatches.next()
             }
         }
+
+//        println("code to compile: $result")
+//        val evv = engine.eval(result, bindings)
+//        println("result: ${evv}")
         return result
+    }
+
+    companion object {
+        private val scriptManager = ScriptEngineManager()
     }
 }

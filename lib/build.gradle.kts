@@ -1,8 +1,11 @@
 import java.net.URI
 
 plugins {
+    java
     kotlin("jvm") version "1.8.0"
     `maven-publish`
+    signing
+    id("org.jetbrains.kotlin.kapt")
 }
 
 group = "io.github.newagewriter"
@@ -73,9 +76,15 @@ repositories {
     mavenCentral()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
+//    kapt("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.8.0")
     testImplementation(kotlin("test"))
 }
 
@@ -85,4 +94,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(8)
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications["maven"])
 }
