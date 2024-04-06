@@ -31,4 +31,4 @@
 ### Feature
 * Prepare first version of library
 * support for #if #else pragma
-* support for @foreach command that ends with @end
+* support for #foreach command that ends with #end
