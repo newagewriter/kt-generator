@@ -1,8 +1,8 @@
-package ${classPackage}.mapper
+package #if("$classPackage" != ""):${classPackage}.mapper #else mapper #endif
 
 import io.github.newagewriter.processor.converter.MapperConverter
 import io.github.newagewriter.processor.mapper.AbstractMapper
-import ${classPackage}.${className}
+import #if("$classPackage" != ""):${classPackage}.${className} #else ${className} #endif
 
 /**
  * ${className}Mapper is auto generated class. Do not change this file.
@@ -20,22 +20,22 @@ class ${className}Mapper(clazz : Class<${className}>) : AbstractMapper<${classNa
 
     public override fun toMap(obj: ${className}): Map<String, Any?> {
         val result = mapOf<String, Any?>(
-        @foreach($fields as key -> value, separator=","):
+        #foreach($fields as key -> value, separator=","):
             "$key" to getValue(obj.$value)
-        @end
+        #endforeach
         )
         return result
     }
 
     public override fun mapToModel(map: Map<String, Any?>): ${className} {
         val convertedMap = mutableMapOf<String, Any?>()
-        @foreach($map as key -> value):
+        #foreach($map as key -> value):
         "$key".split(":").let { parts ->
             if (map.contains(parts[0])) {
                 convertedMap[parts[1]] = $value
             }
         }
-        @end
+        #endforeach
         return createFromMap(convertedMap, ${className}::class)
     }
 }
