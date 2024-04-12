@@ -5,16 +5,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
-import javax.script.ScriptEngineManager
 import kotlin.io.path.pathString
 
 fun main(args: Array<String>) {
-    println("Hello World!")
-
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
-
     val mapperList = mutableMapOf(
         "TestModel" to "com.test",
         "TestModel2" to "",
