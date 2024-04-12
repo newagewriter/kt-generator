@@ -7,8 +7,9 @@ object TemplateLoader {
 
     @JvmStatic
     fun load(templateName: String): TemplateClass {
-        val file = TemplateLoader.javaClass.classLoader.getResourceAsStream("$templateFolder/$templateName.template")
+        val file = TemplateLoader::class.java.classLoader.getResourceAsStream("$templateFolder/$templateName.template")
         return TemplateClass(
+            TemplateClass::class.java.classLoader.getResource("$templateFolder/$templateName.template")?.path ?: "",
             file?.let {
                 file.reader(Charsets.UTF_8).readText()
             } ?: throw FileNotFoundException("ERROR: LOAD failed. Cannot open file or file doesn't exist")
