@@ -4,10 +4,11 @@ Library that generate kotlin file from file template
 ## Description
 
 Library is used to generate kotlin language code from template files.
-Template support three keywords:
+Template support below commands:
 * #foreach
 * #if 
 * #else
+* #end[command_name]
 
 To generate code:
 * prepare code template and save as [template_name].template
@@ -73,6 +74,8 @@ Foreach contains three main part:
 * key -> value - name for key and value extracted from source
 * separator - this parameter is optional, if will be empty there will be no separation sign
 
+To end foreach block use **#endforeach** keyword
+
 #### Example
 
 Generate map from $fields variable
@@ -109,6 +112,8 @@ To use it called
 ```
 
 #else is optional
+
+To end if block use **#endforeach** keyword
 
 #### Example
 

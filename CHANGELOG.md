@@ -1,3 +1,13 @@
+# 0.1.0
+
+### Features
+* Prepare first stable release
+* support for #if #else pragma
+* support for #foreach command that ends with #end
+* Allow use #if command inside #foreach
+* Add template file validation for foreach and if commands
+* Check if user apply all variables used in template
+
 # 0.1.0-beta.5
 
 ### Features
